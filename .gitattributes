@@ -1,0 +1,27 @@
+# Normaliza fin de línea automáticamente
+* text=auto eol=lf
+
+# Código fuente — fuerza LF
+*.js   text eol=lf
+*.mjs  text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.md   text eol=lf
+*.html text eol=lf
+*.sh   text eol=lf
+
+# Archivos de configuración
+.env.example text eol=lf
+.gitignore   text eol=lf
+.editorconfig text eol=lf
+
+# Binarios — no tocar
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.gz   binary

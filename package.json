@@ -3,7 +3,19 @@
   "version": "1.0.0",
   "description": "MCP server para Microsoft 365 — sin dependencias externas, solo Node.js built-ins",
   "type": "module",
-  "private": true,
+  "license": "MIT",
+  "author": "LDominguezIA",
+  "homepage": "https://github.com/LDominguezIA/email-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LDominguezIA/email-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LDominguezIA/email-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
