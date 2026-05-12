@@ -1,0 +1,17 @@
+{
+  "enabledPlugins": {
+    "claude-skills-engineering@local-skills": true
+  },
+  "mcpServers": {
+    "email-mcp": {
+      "command": "node",
+      "args": ["/home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js"],
+      "env": {
+        "TENANT_ID": "",
+        "CLIENT_ID": "",
+        "CLIENT_SECRET": "",
+        "FROM_EMAIL": "ldominguez@atisa.com"
+      }
+    }
+  }
+}

@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Completo — email-mcp</title>
+  <style>
+    :root {
+      --bg:#0d1117; --surface:#161b22; --surface2:#1c2128; --surface3:#21262d;
+      --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+      --blue:#58a6ff; --green:#56d364; --purple:#d2a8ff;
+      --orange:#ffa657; --red:#f78166; --teal:#79c0ff; --yellow:#e3b341;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;display:flex;}
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .sidebar{
+      width:260px;min-width:260px;height:100vh;position:sticky;top:0;
+      background:var(--surface);border-right:1px solid var(--border);
+      overflow-y:auto;padding:24px 0;flex-shrink:0;
+    }
+    .sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+    .sidebar-logo .tag{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);margin-bottom:4px;}
+    .sidebar-logo .name{font-size:.95rem;font-weight:700;color:var(--text);}
+    .sidebar-logo .ver{font-size:.72rem;color:var(--muted);}
+    .nav-section{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:12px 20px 6px;}
+    .nav-link{display:flex;align-items:center;gap:10px;padding:7px 20px;font-size:.83rem;color:var(--muted);text-decoration:none;transition:all .15s;border-left:2px solid transparent;}
+    .nav-link:hover{color:var(--text);background:rgba(255,255,255,.03);}
+    .nav-link.active{color:var(--blue);border-left-color:var(--blue);background:rgba(88,166,255,.06);}
+    .nav-link .ico{font-size:.9rem;flex-shrink:0;}
+    .nav-badge{margin-left:auto;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:10px;}
+    .nb-green{background:rgba(86,211,100,.15);color:var(--green);}
+    .nb-orange{background:rgba(255,166,87,.15);color:var(--orange);}
+    @media(max-width:768px){
+      .sidebar{display:none;}
+      body{display:block;}
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────── */
+    .main{flex:1;min-width:0;padding:0 0 80px;}
+
+    /* ── HERO ── */
+    .hero{
+      padding:60px 48px 50px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(135deg,#161b22 0%,#0d1117 60%,#10161e 100%);
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;top:-100px;right:-100px;
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(86,211,100,.06) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .hero .breadcrumb{font-size:.72rem;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+    .hero .breadcrumb a{color:var(--muted);text-decoration:none;}
+    .hero .breadcrumb a:hover{color:var(--text);}
+    .hero .breadcrumb .sep{opacity:.5;}
+    .hero h1{font-size:2.2rem;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px;}
+    .hero p{color:var(--muted);font-size:.95rem;max-width:580px;line-height:1.8;}
+    .hero .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
+    .chip{font-size:.7rem;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid;}
+    .chip-green{background:rgba(86,211,100,.1);color:var(--green);border-color:rgba(86,211,100,.3);}
+    .chip-blue{background:rgba(88,166,255,.1);color:var(--blue);border-color:rgba(88,166,255,.3);}
+    .chip-orange{background:rgba(255,166,87,.1);color:var(--orange);border-color:rgba(255,166,87,.3);}
+
+    /* ── SECTIONS ── */
+    .section{padding:48px 48px 0;}
+    @media(max-width:600px){.section{padding:32px 20px 0;}.hero{padding:40px 20px 36px;}}
+    .sec-anchor{display:block;height:0;visibility:hidden;margin-top:-80px;padding-top:80px;}
+
+    .sec-eyebrow{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .sec-eyebrow::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-eyebrow .num{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 8px;color:var(--text);font-size:.65rem;}
+    h2{font-size:1.55rem;font-weight:700;letter-spacing:-.3px;margin-bottom:8px;}
+    h3{font-size:1.05rem;font-weight:700;margin-bottom:8px;margin-top:28px;}
+    .lead{font-size:.9rem;color:var(--muted);line-height:1.85;margin-bottom:28px;}
+
+    /* ── DIAGNOSTIC ── */
+    .diag{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+    @media(max-width:600px){.diag{grid-template-columns:1fr;}}
+    .diag-card{border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s;}
+    .diag-card.no{background:rgba(88,166,255,.04);border-color:rgba(88,166,255,.2);}
+    .diag-card.yes{background:rgba(255,166,87,.04);border-color:rgba(255,166,87,.2);}
+    .diag-card .di{font-size:1.6rem;margin-bottom:8px;}
+    .diag-card h4{font-size:.92rem;font-weight:700;margin-bottom:6px;}
+    .diag-card p{font-size:.8rem;color:var(--muted);line-height:1.6;}
+    .diag-card .go{display:inline-block;margin-top:10px;font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:6px;}
+    .diag-card.no .go{background:rgba(88,166,255,.15);color:var(--blue);}
+    .diag-card.yes .go{background:rgba(255,166,87,.15);color:var(--orange);}
+
+    /* ── ROUTE HEADERS ── */
+    .route-hdr{display:flex;align-items:center;gap:14px;margin:36px 0 20px;}
+    .route-badge{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding:4px 14px;border-radius:20px;white-space:nowrap;}
+    .rb-a{background:rgba(86,211,100,.15);color:var(--green);border:1px solid rgba(86,211,100,.3);}
+    .rb-b{background:rgba(255,166,87,.15);color:var(--orange);border:1px solid rgba(255,166,87,.3);}
+    .rb-c{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);}
+    .route-hdr .line{flex:1;height:1px;background:var(--border);}
+    .route-hdr h3{margin:0;font-size:1.05rem;}
+
+    /* ── STEPS ── */
+    .steps{display:flex;flex-direction:column;margin-bottom:28px;}
+    .step{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid rgba(48,54,61,.5);}
+    .step:last-child{border-bottom:0;}
+    .step-num{flex-shrink:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;margin-top:2px;}
+    .sn-green{background:rgba(86,211,100,.15);color:var(--green);border:1px solid rgba(86,211,100,.3);}
+    .sn-orange{background:rgba(255,166,87,.15);color:var(--orange);border:1px solid rgba(255,166,87,.3);}
+    .sn-blue{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);}
+    .sn-purple{background:rgba(210,168,255,.15);color:var(--purple);border:1px solid rgba(210,168,255,.3);}
+    .step-body{flex:1;}
+    .step-title{font-size:.95rem;font-weight:700;margin-bottom:5px;}
+    .step-desc{font-size:.85rem;color:var(--muted);line-height:1.75;}
+    .step-desc strong{color:var(--text);}
+
+    /* ── CODE ── */
+    .code-block{
+      background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+      padding:16px 20px;font-family:'SF Mono','Fira Code',monospace;font-size:.78rem;
+      line-height:2;overflow-x:auto;margin:10px 0;color:var(--muted);
+      position:relative;
+    }
+    .code-block .cm{color:var(--muted);}
+    .code-block .k{color:var(--orange);}
+    .code-block .v{color:var(--green);}
+    .code-block .s{color:var(--yellow);}
+    .code-block .c{color:var(--text);}
+    .code-block .p{color:var(--purple);}
+    .code-block .e{color:var(--red);}
+    .code-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px;}
+
+    /* ── CALLOUTS ── */
+    .callout{border-radius:8px;padding:12px 16px;font-size:.84rem;line-height:1.7;margin:12px 0;display:flex;gap:10px;align-items:flex-start;}
+    .callout.warn{background:rgba(255,166,87,.07);border:1px solid rgba(255,166,87,.25);}
+    .callout.info{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.25);}
+    .callout.ok  {background:rgba(86,211,100,.07);border:1px solid rgba(86,211,100,.25);}
+    .callout.bad {background:rgba(247,129,102,.07);border:1px solid rgba(247,129,102,.25);}
+    .callout-ico{flex-shrink:0;margin-top:1px;}
+    .callout p{color:var(--text);margin:0;font-size:.84rem;}
+    .callout p strong{color:inherit;}
+    .callout a{color:inherit;}
+
+    /* ── CONVERSATION ── */
+    .conv{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;}
+    .conv-row{padding:14px 18px;display:flex;gap:12px;align-items:flex-start;}
+    .conv-row.usr{background:rgba(88,166,255,.04);border-bottom:1px solid var(--border);}
+    .conv-row:last-child{border-bottom:0;}
+    .conv-ava{font-size:1rem;flex-shrink:0;margin-top:2px;}
+    .conv-name{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;}
+    .conv-name.u{color:var(--blue);}
+    .conv-name.a{color:var(--green);}
+    .conv-text{font-size:.85rem;color:var(--text);line-height:1.7;}
+    .conv-text em{color:var(--green);font-style:normal;}
+    .tool-call{display:inline-flex;align-items:center;gap:5px;background:rgba(210,168,255,.1);border:1px solid rgba(210,168,255,.2);color:var(--purple);font-size:.7rem;font-weight:600;padding:2px 9px;border-radius:5px;font-family:'SF Mono',monospace;margin:3px 0;}
+
+    /* ── TOOL TABLE ── */
+    .tool-table{width:100%;border-collapse:collapse;font-size:.84rem;margin:14px 0;}
+    .tool-table th{text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);}
+    .tool-table td{padding:11px 14px;border-bottom:1px solid rgba(48,54,61,.4);vertical-align:top;}
+    .tool-table tr:last-child td{border-bottom:0;}
+    .tool-table td:first-child{color:var(--teal);font-family:'SF Mono',monospace;white-space:nowrap;font-size:.78rem;}
+    .tool-table td:nth-child(2){color:var(--muted);}
+    .tool-table tr:hover td{background:rgba(255,255,255,.02);}
+    .bsm{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid;white-space:nowrap;}
+    .bg{background:rgba(86,211,100,.12);color:var(--green);border-color:rgba(86,211,100,.25);}
+    .bb{background:rgba(88,166,255,.12);color:var(--blue);border-color:rgba(88,166,255,.25);}
+
+    /* ── COMPARE GRID ── */
+    .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+    @media(max-width:600px){.cmp-grid{grid-template-columns:1fr;}}
+    .cmp-card{border:1px solid var(--border);border-radius:10px;padding:20px;}
+    .cmp-card.bad-card{background:rgba(247,129,102,.04);border-color:rgba(247,129,102,.2);}
+    .cmp-card.good-card{background:rgba(86,211,100,.04);border-color:rgba(86,211,100,.2);}
+    .cmp-card h4{font-size:.9rem;font-weight:700;margin-bottom:12px;}
+    .cmp-card ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+    .cmp-card li{font-size:.82rem;color:var(--muted);display:flex;gap:8px;align-items:flex-start;}
+
+    /* ── TROUBLE ── */
+    .trouble{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+    .trouble-q{padding:13px 18px;font-size:.87rem;font-weight:600;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+    .trouble-a{padding:12px 18px;font-size:.83rem;color:var(--muted);line-height:1.75;}
+    .trouble-a strong{color:var(--text);}
+    code{font-family:'SF Mono','Fira Code',monospace;font-size:.8em;background:rgba(88,166,255,.1);color:var(--teal);padding:2px 7px;border-radius:4px;}
+    a{color:var(--blue);}
+
+    /* ── NAV PATH ── */
+    .nav-path{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.82rem;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 14px;margin:8px 0;}
+    .nav-path .crumb{color:var(--text);font-weight:600;}
+    .nav-path .sep{color:var(--muted);}
+    .nav-path .action{color:var(--green);font-weight:700;}
+
+    /* ── STATUS PREVIEW ── */
+    .status-preview{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:10px 0;font-family:'SF Mono',monospace;font-size:.78rem;}
+    .sp-label{font-family:sans-serif;font-size:.6rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:8px;}
+    .sp-row{display:flex;align-items:center;gap:8px;padding:4px 0;}
+    .sp-dot-g{color:var(--green);}
+    .sp-dot-r{color:var(--red);}
+    .sp-name{color:var(--text);font-weight:700;}
+    .sp-status-g{color:var(--green);}
+    .sp-status-r{color:var(--red);}
+    .sp-tools{color:var(--muted);font-size:.7rem;margin-left:16px;}
+
+    /* ── DIVIDER ── */
+    .divider{height:1px;background:var(--border);margin:48px 0 0;}
+
+    /* ── FOOTER ── */
+    footer{padding:32px 48px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+    footer strong{color:var(--text);}
+    footer a{color:var(--blue);}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="tag">Manual completo</div>
+    <div class="name">📧 email-mcp</div>
+    <div class="ver">v1.0.0 · Modo SMTP + Graph API</div>
+  </div>
+
+  <div class="nav-section">Introducción</div>
+  <a href="#intro" class="nav-link"><span class="ico">🗺️</span> Visión general</a>
+  <a href="#prereq" class="nav-link"><span class="ico">✅</span> Requisitos previos</a>
+
+  <div class="nav-section">Parte 1 — Credenciales</div>
+  <a href="#diagnostico" class="nav-link"><span class="ico">🔍</span> Diagnóstico MFA</a>
+  <a href="#ruta-a" class="nav-link"><span class="ico">🔓</span> Ruta A — Sin MFA <span class="nav-badge nb-green">Fácil</span></a>
+  <a href="#ruta-b" class="nav-link"><span class="ico">🔐</span> Ruta B — Con MFA</a>
+  <a href="#smtp-bloqueado" class="nav-link"><span class="ico">⚠️</span> SMTP bloqueado por IT</a>
+
+  <div class="nav-section">Parte 2 — Claude Code</div>
+  <a href="#como-funciona" class="nav-link"><span class="ico">⚙️</span> Cómo funciona .mcp.json</a>
+  <a href="#registro" class="nav-link"><span class="ico">🔌</span> Registrar el servidor</a>
+  <a href="#verificar" class="nav-link"><span class="ico">🧪</span> Verificar que funciona</a>
+
+  <div class="nav-section">Uso</div>
+  <a href="#herramientas" class="nav-link"><span class="ico">🛠️</span> Herramientas disponibles</a>
+  <a href="#ejemplos" class="nav-link"><span class="ico">💬</span> Ejemplos de conversación</a>
+
+  <div class="nav-section">Referencia</div>
+  <a href="#troubleshooting" class="nav-link"><span class="ico">🐛</span> Solución de problemas</a>
+  <a href="#recordar" class="nav-link"><span class="ico">📌</span> Qué recordar</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="breadcrumb">
+      <a href="../../index.html">home-Termux</a>
+      <span class="sep">›</span>
+      <a href="../">email-mcp</a>
+      <span class="sep">›</span>
+      <span>Manual completo</span>
+    </div>
+    <h1>Manual de Configuración<br>email-mcp</h1>
+    <p>Guía completa para configurar las credenciales, registrar el servidor MCP en Claude Code y empezar a enviar emails con lenguaje natural desde cualquier proyecto del workspace.</p>
+    <div class="chips">
+      <span class="chip chip-green">✅ Sin Azure AD necesario</span>
+      <span class="chip chip-orange">⏱ ~15 min en total</span>
+      <span class="chip chip-blue">📧 Microsoft 365 / Outlook</span>
+    </div>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="intro"></span>
+    <div class="sec-eyebrow"><span class="num">00</span> Introducción</div>
+    <h2>Cómo está organizado este manual</h2>
+    <p class="lead">Este manual tiene dos partes. Completa la Parte 1 primero — sin las credenciales la Parte 2 no tiene sentido.</p>
+
+    <div class="cmp-grid">
+      <div class="cmp-card good-card">
+        <h4 style="color:var(--green);">Parte 1 — Credenciales</h4>
+        <ul>
+          <li><span>🔍</span> Diagnosticar si tienes MFA</li>
+          <li><span>📄</span> Crear el archivo <code>.env</code></li>
+          <li><span>🔑</span> Obtener contraseña de aplicación (si MFA)</li>
+          <li><span>⚙️</span> Actualizar <code>.mcp.json</code></li>
+        </ul>
+      </div>
+      <div class="cmp-card good-card">
+        <h4 style="color:var(--blue);">Parte 2 — Claude Code</h4>
+        <ul>
+          <li><span>🔌</span> Entender cómo se registra el MCP</li>
+          <li><span>🖥️</span> Abrir Claude Code y verificar conexión</li>
+          <li><span>💬</span> Usar las herramientas de email</li>
+          <li><span>🐛</span> Resolver problemas comunes</li>
+        </ul>
+      </div>
+    </div>
+
+    <span class="sec-anchor" id="prereq"></span>
+    <h3>Antes de empezar — lo que necesitas</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-green">✓</div>
+        <div class="step-body">
+          <div class="step-title">Acceso a tu cuenta de Outlook / Microsoft 365</div>
+          <div class="step-desc">La cuenta que aparece como <code>ldominguez@atisa.com</code>. Es la misma con la que entras al correo corporativo.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">✓</div>
+        <div class="step-body">
+          <div class="step-title">Node.js instalado en la terminal</div>
+          <div class="step-desc">Verifica con <code>node --version</code>. Debe mostrar <code>v18</code> o superior. Si no está instalado, descárgalo desde <strong>nodejs.org</strong>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">✓</div>
+        <div class="step-body">
+          <div class="step-title">Claude Code CLI instalado</div>
+          <div class="step-desc">Verifica con <code>claude --version</code>. Si no está instalado: <code>npm install -g @anthropic-ai/claude-code</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">✓</div>
+        <div class="step-body">
+          <div class="step-title">La carpeta <code>email-mcp/</code> existe con todos sus archivos</div>
+          <div class="step-desc">Verifica: <code>ls /home/llopez/tablet/Documents/home-Termux/email-mcp/src/</code> — debe mostrar <code>index.js</code>, <code>smtp.js</code>, <code>graph.js</code>, <code>scheduler.js</code>, <code>templates.js</code>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       PARTE 1 — CREDENCIALES
+  ════════════════════════════════════════════ -->
+  <div class="section">
+    <span class="sec-anchor" id="diagnostico"></span>
+    <div class="sec-eyebrow" style="margin-top:48px;"><span class="num">01</span> Parte 1 · Credenciales</div>
+    <h2>¿Tienes MFA (doble factor) activo?</h2>
+    <p class="lead">MFA significa que para entrar a tu cuenta Microsoft necesitas además de la contraseña un código del teléfono, una notificación en la app Authenticator, o un SMS. Esto cambia cómo debes configurar la contraseña para SMTP.</p>
+
+    <div class="diag">
+      <div class="diag-card no">
+        <div class="di">🔓</div>
+        <h4>Sin MFA — acceso solo con contraseña</h4>
+        <p>Entras a Outlook solo con email + contraseña. El sistema no te pide ningún código extra.</p>
+        <span class="go">→ Sigue la Ruta A (3 pasos)</span>
+      </div>
+      <div class="diag-card yes">
+        <div class="di">🔐</div>
+        <h4>Con MFA activo</h4>
+        <p>Al entrar te pide un código de la app Authenticator, un SMS, o una notificación push en el teléfono.</p>
+        <span class="go">→ Sigue la Ruta B (contraseña de app)</span>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-ico">💡</span>
+      <p><strong>¿Cómo verifico si tengo MFA?</strong> Entra a <strong>account.microsoft.com → Seguridad → Opciones de seguridad avanzadas</strong>. Si ves "Verificación en dos pasos: Activada", estás en la Ruta B.</p>
+    </div>
+  </div>
+
+  <!-- ══ RUTA A ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="ruta-a"></span>
+    <div class="route-hdr">
+      <span class="route-badge rb-a">Ruta A</span>
+      <div class="line"></div>
+      <h3 style="margin:0;">Sin MFA — contraseña directa</h3>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-green">1</div>
+        <div class="step-body">
+          <div class="step-title">Ten a mano tu contraseña de Outlook</div>
+          <div class="step-desc">Es la misma que usas para entrar al correo en el navegador o en la app de escritorio. <strong>No necesitas hacer nada en la web.</strong></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">2</div>
+        <div class="step-body">
+          <div class="step-title">Crea el archivo <code>.env</code></div>
+          <div class="step-desc">Dentro de la carpeta <code>email-mcp/</code> crea un archivo llamado <strong>exactamente</strong> <code>.env</code> (con el punto al inicio). Escribe esto adentro:</div>
+          <div class="code-label" style="margin-top:10px;">email-mcp/.env</div>
+          <div class="code-block">
+<span class="k">SMTP_USER</span>=<span class="v">ldominguez@atisa.com</span>
+<span class="k">SMTP_PASS</span>=<span class="v">tu_contraseña_de_outlook</span>
+<span class="k">FROM_EMAIL</span>=<span class="v">ldominguez@atisa.com</span>
+          </div>
+          <div class="callout warn" style="margin-top:6px;">
+            <span class="callout-ico">⚠️</span>
+            <p><strong>Nunca compartas este archivo.</strong> No lo subas a git, no lo envíes por chat. Contiene tu contraseña en texto plano.</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">3</div>
+        <div class="step-body">
+          <div class="step-title">Rellena <code>SMTP_PASS</code> en el archivo <code>.mcp.json</code></div>
+          <div class="step-desc">Abre <code>email-mcp/.mcp.json</code> y pon tu contraseña en el campo indicado:</div>
+          <div class="code-label" style="margin-top:10px;">email-mcp/.mcp.json</div>
+          <div class="code-block">
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"email-mcp"</span>: {
+      <span class="k">"command"</span>: <span class="v">"node"</span>,
+      <span class="k">"args"</span>: [<span class="v">"/home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js"</span>],
+      <span class="k">"env"</span>: {
+        <span class="k">"SMTP_USER"</span>:  <span class="v">"ldominguez@atisa.com"</span>,
+        <span class="k">"SMTP_PASS"</span>:  <span class="v">"tu_contraseña_aquí"</span>,   <span class="cm">← esto</span>
+        <span class="k">"FROM_EMAIL"</span>: <span class="v">"ldominguez@atisa.com"</span>
+      }
+    }
+  }
+}
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-green">4</div>
+        <div class="step-body">
+          <div class="step-title">Prueba que arranca sin errores</div>
+          <div class="step-desc">En la terminal, desde la carpeta <code>email-mcp/</code>:</div>
+          <div class="code-block"><span class="c">node src/index.js</span></div>
+          <div class="step-desc" style="margin-top:6px;">Debes ver en la terminal:</div>
+          <div class="code-block"><span class="v">[email-mcp] Planificador iniciado (chequeo cada 30s)
+[email-mcp] Servidor iniciado en modo SMTP. Esperando conexión de Claude Code...</span></div>
+          <div class="step-desc" style="margin-top:6px;">Presiona <strong>Ctrl+C</strong> para detenerlo. Si aparece ese mensaje, la Parte 1 está completa.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout ok">
+      <span class="callout-ico">✅</span>
+      <p><strong>Ruta A completa.</strong> Pasa directamente a la <a href="#como-funciona">Parte 2 — Claude Code</a>.</p>
+    </div>
+  </div>
+
+  <!-- ══ RUTA B ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="ruta-b"></span>
+    <div class="route-hdr">
+      <span class="route-badge rb-b">Ruta B</span>
+      <div class="line"></div>
+      <h3 style="margin:0;">Con MFA — contraseña de aplicación</h3>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-ico">ℹ️</span>
+      <p><strong>Por qué tu contraseña normal no funciona con MFA:</strong> SMTP es un protocolo que no soporta el segundo factor. Microsoft bloquea la autenticación básica cuando MFA está activo. La solución oficial es una <strong>contraseña de aplicación</strong>: una clave de 16 letras generada especialmente para apps sin soporte de MFA.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-orange">1</div>
+        <div class="step-body">
+          <div class="step-title">Ve a la configuración de seguridad de Microsoft</div>
+          <div class="step-desc">Abre el navegador y ve a esta dirección:</div>
+          <div class="nav-path"><span style="color:var(--blue);">https://account.microsoft.com/security</span></div>
+          <div class="step-desc">Inicia sesión con tu cuenta <code>ldominguez@atisa.com</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-orange">2</div>
+        <div class="step-body">
+          <div class="step-title">Abre las opciones de seguridad avanzadas</div>
+          <div class="step-desc">Busca y haz clic en el enlace:</div>
+          <div class="nav-path">
+            <span class="crumb">Seguridad</span><span class="sep"> › </span>
+            <span class="action">Opciones de seguridad avanzadas</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-orange">3</div>
+        <div class="step-body">
+          <div class="step-title">Crea una nueva contraseña de aplicación</div>
+          <div class="step-desc">En la sección <strong>"Contraseñas de aplicación"</strong>:</div>
+          <div class="nav-path">
+            <span class="crumb">Contraseñas de aplicación</span><span class="sep"> › </span>
+            <span class="action">Crear una nueva contraseña de aplicación</span>
+          </div>
+          <div class="step-desc" style="margin-top:8px;">Microsoft genera automáticamente algo como:</div>
+          <div class="code-block"><span class="v">abcd efgh ijkl mnop</span>   <span class="cm">← ejemplo, la tuya será diferente</span></div>
+          <div class="callout warn">
+            <span class="callout-ico">⚠️</span>
+            <p><strong>Copia la contraseña en este momento.</strong> Microsoft solo la muestra una vez. Si cierras la pantalla sin copiarla, deberás generar una nueva.</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-orange">4</div>
+        <div class="step-body">
+          <div class="step-title">Crea el archivo <code>.env</code> con esa contraseña</div>
+          <div class="step-desc">Usa la contraseña de aplicación <strong>sin espacios</strong> en <code>SMTP_PASS</code>:</div>
+          <div class="code-label" style="margin-top:10px;">email-mcp/.env</div>
+          <div class="code-block">
+<span class="k">SMTP_USER</span>=<span class="v">ldominguez@atisa.com</span>
+<span class="k">SMTP_PASS</span>=<span class="v">abcdefghijklmnop</span>   <span class="cm">← sin espacios</span>
+<span class="k">FROM_EMAIL</span>=<span class="v">ldominguez@atisa.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-orange">5</div>
+        <div class="step-body">
+          <div class="step-title">Rellena también el <code>.mcp.json</code></div>
+          <div class="step-desc">Igual que en la Ruta A, pon la contraseña de aplicación (sin espacios) en el campo <code>SMTP_PASS</code> de <code>email-mcp/.mcp.json</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-orange">6</div>
+        <div class="step-body">
+          <div class="step-title">Verifica que arranca</div>
+          <div class="code-block"><span class="c">node src/index.js</span></div>
+          <div class="step-desc" style="margin-top:6px;">Debes ver <code style="color:var(--green);">[email-mcp] Servidor iniciado en modo SMTP.</code> — eso confirma que la contraseña de aplicación es válida.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout ok">
+      <span class="callout-ico">✅</span>
+      <p><strong>Ruta B completa.</strong> Pasa a la <a href="#como-funciona">Parte 2 — Claude Code</a>.</p>
+    </div>
+  </div>
+
+  <!-- ══ SMTP BLOQUEADO ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="smtp-bloqueado"></span>
+    <div class="route-hdr">
+      <span class="route-badge" style="background:rgba(247,129,102,.15);color:var(--red);border:1px solid rgba(247,129,102,.3);">⚠ Caso especial</span>
+      <div class="line"></div>
+      <h3 style="margin:0;">¿IT deshabilitó SMTP AUTH en tu cuenta?</h3>
+    </div>
+
+    <p class="lead" style="margin-bottom:16px;">Algunos administradores de Microsoft 365 deshabilitan SMTP AUTH por política. Si obtienes el error <code>535</code> o <code>AUTH command not accepted</code> aunque tu contraseña sea correcta, este es tu caso.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-purple">1</div>
+        <div class="step-body">
+          <div class="step-title">Identifica el error</div>
+          <div class="code-block">
+<span class="e">SMTP 535: 5.7.139 Authentication unsuccessful...</span>
+<span class="e">SMTP 503: AUTH command not accepted</span>
+<span class="e">5.7.57 SMTP; Client was not authenticated</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-purple">2</div>
+        <div class="step-body">
+          <div class="step-title">Pídele a IT que habilite SMTP AUTH para tu cuenta</div>
+          <div class="step-desc">Es un cambio de 30 segundos para el administrador. Copia y pega este mensaje:</div>
+          <div class="code-block">
+<span class="cm">--- Mensaje para IT ---</span>
+
+Hola, necesito que habilites "SMTP AUTH" para mi cuenta
+<span class="v">ldominguez@atisa.com</span> en el centro de administración de M365.
+
+Ruta: Centro de administración M365 → Usuarios
+      → mi usuario → Correo
+      → Configuración de correo
+      → "Envío de correo autenticado (SMTP)" → Activar
+
+Es para una herramienta de automatización interna.
+Gracias.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-purple">3</div>
+        <div class="step-body">
+          <div class="step-title">Alternativa mientras esperas: Graph API</div>
+          <div class="step-desc">Si necesitas avanzar sin esperar a IT, pide a un admin de Azure AD que cree un App Registration con permisos <code>Mail.Send</code> + <code>Mail.ReadWrite</code>. Luego en el <code>.env</code> usa <code>TENANT_ID</code>, <code>CLIENT_ID</code>, <code>CLIENT_SECRET</code> en lugar de <code>SMTP_USER</code> y <code>SMTP_PASS</code>. El servidor detecta el modo automáticamente.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       PARTE 2 — CLAUDE CODE
+  ════════════════════════════════════════════ -->
+  <div class="section">
+    <span class="sec-anchor" id="como-funciona"></span>
+    <div class="sec-eyebrow" style="margin-top:48px;"><span class="num">02</span> Parte 2 · Claude Code</div>
+    <h2>Cómo funciona el archivo <code>.mcp.json</code></h2>
+    <p class="lead">Claude Code busca archivos <code>.mcp.json</code> al arrancar. Si encuentra uno, lanza los servidores MCP listados ahí como procesos en segundo plano y conecta las herramientas al asistente.</p>
+
+    <div class="cmp-grid">
+      <div class="cmp-card" style="background:rgba(255,166,87,.04);border-color:rgba(255,166,87,.2);">
+        <h4 style="color:var(--orange);">📁 Nivel de proyecto</h4>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px;">Archivo: <code>email-mcp/.mcp.json</code></p>
+        <p style="font-size:.82rem;color:var(--muted);">Activo cuando abres Claude Code desde <code>email-mcp/</code> o desde su carpeta padre <code>home-Termux/</code>.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--green);">✓ Ya existe y tiene la estructura correcta</div>
+      </div>
+      <div class="cmp-card" style="background:rgba(88,166,255,.04);border-color:rgba(88,166,255,.2);">
+        <h4 style="color:var(--blue);">🏠 Nivel de workspace</h4>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px;">Archivo: <code>home-Termux/.mcp.json</code></p>
+        <p style="font-size:.82rem;color:var(--muted);">Activo desde cualquier subcarpeta: <code>FinancalFreeHome/</code>, <code>naves-industriales-ai/</code>, etc. Necesita la contraseña.</p>
+        <div style="margin-top:10px;font-size:.78rem;color:var(--orange);">⚠ Rellenar SMTP_PASS</div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-ico">💡</span>
+      <p><strong>Configura ambos.</strong> Así puedes enviar emails desde cualquier proyecto del workspace, no solo desde la carpeta de email-mcp.</p>
+    </div>
+  </div>
+
+  <!-- ══ REGISTRO ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="registro"></span>
+    <h3 style="margin-top:0;">Registrar el servidor — paso a paso</h3>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-blue">1</div>
+        <div class="step-body">
+          <div class="step-title">Confirma que <code>email-mcp/.mcp.json</code> tiene la contraseña</div>
+          <div class="step-desc">Ábrelo y verifica que <code>SMTP_PASS</code> no está vacío. Debe verse así:</div>
+          <div class="code-block">
+<span class="k">"SMTP_USER"</span>:  <span class="v">"ldominguez@atisa.com"</span>,
+<span class="k">"SMTP_PASS"</span>:  <span class="v">"tu_contraseña_real"</span>,     <span class="cm">← no debe estar vacío</span>
+<span class="k">"FROM_EMAIL"</span>: <span class="v">"ldominguez@atisa.com"</span>
+          </div>
+          <div class="callout warn">
+            <span class="callout-ico">⚠️</span>
+            <p>La ruta en <code>args</code> debe ser <strong>absoluta</strong>: <code>/home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js</code>. Las rutas relativas no funcionan en MCP.</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-blue">2</div>
+        <div class="step-body">
+          <div class="step-title">Rellena también el <code>.mcp.json</code> del workspace raíz</div>
+          <div class="step-desc">Abre <code>/home/llopez/tablet/Documents/home-Termux/.mcp.json</code> y pon la misma contraseña en <code>SMTP_PASS</code>.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-blue">3</div>
+        <div class="step-body">
+          <div class="step-title">Abre Claude Code desde el workspace</div>
+          <div class="code-block">
+<span class="c">cd /home/llopez/tablet/Documents/home-Termux</span>
+<span class="c">claude</span>
+          </div>
+          <div class="step-desc" style="margin-top:6px;">Claude Code leerá el <code>.mcp.json</code> automáticamente y arrancará email-mcp en segundo plano. No necesitas hacer nada más para iniciarlo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VERIFICAR ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="verificar"></span>
+    <h3 style="margin-top:0;">Verificar que está conectado</h3>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num sn-blue">4</div>
+        <div class="step-body">
+          <div class="step-title">Escribe <code>/mcp</code> dentro de Claude Code</div>
+          <div class="step-desc">Debes ver email-mcp en verde:</div>
+          <div class="status-preview">
+            <div class="sp-label">Salida esperada de /mcp</div>
+            <div class="sp-row"><span class="sp-dot-g">●</span> <span class="sp-name">email-mcp</span> <span class="sp-status-g">connected</span></div>
+            <div class="sp-tools">7 tools: email_enviar, email_programar, email_borrador, email_plantilla, email_cola, email_cancelar, email_enviados</div>
+          </div>
+          <div style="margin-top:8px;">
+          <div class="status-preview">
+            <div class="sp-label">Si hay error</div>
+            <div class="sp-row"><span class="sp-dot-r">●</span> <span class="sp-name">email-mcp</span> <span class="sp-status-r">failed to start</span></div>
+            <div class="sp-tools" style="color:var(--red);">→ Ver sección Solución de problemas</div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num sn-blue">5</div>
+        <div class="step-body">
+          <div class="step-title">Envía un email de prueba</div>
+          <div class="conv">
+            <div class="conv-row usr">
+              <span class="conv-ava">👤</span>
+              <div>
+                <div class="conv-name u">Tú</div>
+                <div class="conv-text">Manda un email de prueba a ldominguez@atisa.com con asunto "Test email-mcp" y el cuerpo "Funciona correctamente"</div>
+              </div>
+            </div>
+            <div class="conv-row">
+              <span class="conv-ava">🤖</span>
+              <div>
+                <div class="conv-name a">Claude</div>
+                <div class="conv-text">
+                  <span class="tool-call">⚙ email_enviar</span><br>
+                  <em>✅ Email enviado correctamente a: ldominguez@atisa.com</em><br>
+                  <em>Asunto: Test email-mcp</em>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-desc" style="margin-top:6px;">Revisa tu bandeja de entrada. Si el email llega, <strong>la configuración es completa y funcional</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       USO
+  ════════════════════════════════════════════ -->
+  <div class="section">
+    <span class="sec-anchor" id="herramientas"></span>
+    <div class="sec-eyebrow" style="margin-top:48px;"><span class="num">03</span> Uso</div>
+    <h2>Herramientas disponibles</h2>
+    <p class="lead">No necesitas escribir los nombres técnicos. Claude elige la herramienta correcta según lo que describes en lenguaje natural.</p>
+
+    <table class="tool-table">
+      <thead>
+        <tr>
+          <th>Herramienta</th>
+          <th>Qué hace</th>
+          <th>Ejemplo de comando natural</th>
+          <th>Modo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>email_enviar</td>
+          <td>Envía HTML inmediatamente</td>
+          <td>"Manda el análisis a pedro@empresa.com"</td>
+          <td><span class="bsm bg">SMTP</span> <span class="bsm bb">Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_programar</td>
+          <td>Encola para envío futuro</td>
+          <td>"Programa este reporte para mañana a las 8 AM"</td>
+          <td><span class="bsm bg">SMTP</span> <span class="bsm bb">Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_plantilla</td>
+          <td>Renderiza plantilla HTML + envía</td>
+          <td>"Usa la plantilla financiera y manda el reporte mensual"</td>
+          <td><span class="bsm bg">SMTP</span> <span class="bsm bb">Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_cola</td>
+          <td>Lista emails pendientes</td>
+          <td>"¿Qué emails tengo programados esta semana?"</td>
+          <td><span class="bsm bg">SMTP</span> <span class="bsm bb">Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_cancelar</td>
+          <td>Cancela un job por ID</td>
+          <td>"Cancela el email con ID a3f9c1"</td>
+          <td><span class="bsm bg">SMTP</span> <span class="bsm bb">Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_borrador</td>
+          <td>Guarda en Borradores de Outlook</td>
+          <td>"Guarda esto como borrador, lo reviso antes de enviarlo"</td>
+          <td><span class="bsm bb">Solo Graph</span></td>
+        </tr>
+        <tr>
+          <td>email_enviados</td>
+          <td>Consulta buzón de enviados</td>
+          <td>"Muéstrame los últimos 5 emails que mandé"</td>
+          <td><span class="bsm bb">Solo Graph</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ EJEMPLOS ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="ejemplos"></span>
+    <h3 style="margin-top:0;">Conversaciones completas de ejemplo</h3>
+
+    <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">1 · Reporte de ingeniería inversa por email</p>
+    <div class="conv">
+      <div class="conv-row usr">
+        <span class="conv-ava">👤</span>
+        <div><div class="conv-name u">Tú</div>
+        <div class="conv-text">Analiza el proyecto FinancalFreeHome y envía el reporte a mi jefe en jefe@atisa.com</div></div>
+      </div>
+      <div class="conv-row">
+        <span class="conv-ava">🤖</span>
+        <div><div class="conv-name a">Claude</div>
+        <div class="conv-text">
+          Voy a analizar el proyecto y preparar el reporte.<br><br>
+          <span class="tool-call">⚙ reverse-engineering</span><br>
+          <em>Analizando estructura, dependencias, flujos de datos...</em><br><br>
+          Análisis completo. Health Score: 74/100. Envío el reporte con la plantilla de ingeniería inversa.<br><br>
+          <span class="tool-call">⚙ email_plantilla</span><br>
+          <em>✅ Reporte "ingenieria-inversa" enviado a jefe@atisa.com</em>
+        </div></div>
+      </div>
+    </div>
+
+    <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;margin-top:20px;">2 · Email programado para el lunes</p>
+    <div class="conv">
+      <div class="conv-row usr">
+        <span class="conv-ava">👤</span>
+        <div><div class="conv-name u">Tú</div>
+        <div class="conv-text">Prepara el reporte financiero de mayo y prográmalo para el próximo lunes a las 8 AM para equipo@atisa.com</div></div>
+      </div>
+      <div class="conv-row">
+        <span class="conv-ava">🤖</span>
+        <div><div class="conv-name a">Claude</div>
+        <div class="conv-text">
+          <span class="tool-call">⚙ email_plantilla</span> con <code>programar_para: "2026-05-18T08:00:00"</code><br><br>
+          <em>📅 Reporte "financiero" programado.</em><br>
+          <em>ID: 4d2a9f · Para: equipo@atisa.com</em><br>
+          <em>Envío: lunes 18 may 2026, 8:00 AM</em><br><br>
+          Para cancelarlo: "cancela el job 4d2a9f"
+        </div></div>
+      </div>
+    </div>
+
+    <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;margin-top:20px;">3 · Ver y cancelar la cola</p>
+    <div class="conv">
+      <div class="conv-row usr">
+        <span class="conv-ava">👤</span>
+        <div><div class="conv-name u">Tú</div>
+        <div class="conv-text">¿Qué emails tengo programados? Cancela el del lunes.</div></div>
+      </div>
+      <div class="conv-row">
+        <span class="conv-ava">🤖</span>
+        <div><div class="conv-name a">Claude</div>
+        <div class="conv-text">
+          <span class="tool-call">⚙ email_cola</span><br><br>
+          <em>⏳ [4d2a9f] lun 18 may 08:00 → equipo@atisa.com — Reporte Financiero Mayo</em><br>
+          <em>⏳ [8b3e12] mié 20 may 09:30 → cliente@empresa.com — Dictamen Nave Lote 3</em><br><br>
+          Cancelo el del lunes.<br><br>
+          <span class="tool-call">⚙ email_cancelar</span> job_id: "4d2a9f"<br>
+          <em>🗑️ Job "4d2a9f" cancelado.</em>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════
+       TROUBLESHOOTING
+  ════════════════════════════════════════════ -->
+  <div class="section">
+    <span class="sec-anchor" id="troubleshooting"></span>
+    <div class="sec-eyebrow" style="margin-top:48px;"><span class="num">04</span> Referencia</div>
+    <h2>Solución de problemas</h2>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ <code>/mcp</code> no muestra email-mcp</div>
+      <div class="trouble-a">
+        <strong>Causa 1:</strong> Abriste Claude Code desde una carpeta que no tiene <code>.mcp.json</code> en su árbol. Solución: abre siempre desde <code>home-Termux/</code>.<br><br>
+        <strong>Causa 2:</strong> Error de sintaxis en el <code>.mcp.json</code>. Verifica con:<br>
+        <code>node -e "JSON.parse(require('fs').readFileSync('email-mcp/.mcp.json','utf8'))"</code><br>
+        Si no muestra error, el JSON está bien.<br><br>
+        <strong>Causa 3:</strong> La ruta en <code>args</code> no existe. Verifica:<br>
+        <code>ls /home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js</code>
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ email-mcp aparece en rojo / "failed to start"</div>
+      <div class="trouble-a">
+        Corre el servidor manualmente para ver el error exacto:<br>
+        <code>node /home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js</code><br><br>
+        Los errores más frecuentes: <code>SMTP_PASS</code> vacío en <code>.mcp.json</code>, ruta incorrecta, o permisos de archivo. El error aparecerá en pantalla con el mensaje exacto.
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ Error "Authentication unsuccessful" (código 535) al enviar</div>
+      <div class="trouble-a">
+        <strong>Contraseña incorrecta.</strong> Verifica que <code>SMTP_PASS</code> no tenga espacios extras ni comillas. Si tienes MFA activo y usaste tu contraseña principal, necesitas una contraseña de aplicación (Ruta B). Revisa que el valor en <code>.mcp.json</code> y en <code>.env</code> sea idéntico.
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ Timeout de conexión SMTP (30 segundos)</div>
+      <div class="trouble-a">
+        El servidor <code>smtp.office365.com:587</code> no es alcanzable. Posibles causas: (1) estás en una red VPN o corporativa que bloquea el puerto 587, (2) no hay conexión a internet desde la terminal. Prueba: <code>curl -v telnet://smtp.office365.com:587</code> — si no conecta, el puerto está bloqueado.
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ El email programado no se envió a la hora indicada</div>
+      <div class="trouble-a">
+        El scheduler solo funciona mientras Claude Code está abierto y conectado al MCP. Si cerraste Claude Code, el proceso se detuvo. Los jobs quedan guardados en <code>queue.json</code> y se enviarán la próxima vez que Claude Code esté activo y llegue su horario.
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ El email llega con caracteres raros en el asunto (tildes, ñ)</div>
+      <div class="trouble-a">
+        El asunto está codificado en UTF-8 con RFC 2047. Si tu cliente de correo no lo decodifica correctamente, prueba actualizar el cliente. En Outlook Desktop y Outlook Web esto funciona correctamente. En clientes más antiguos puede aparecer como <code>=?UTF-8?B?...?=</code>.
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-q">❌ "Los borradores requieren Microsoft Graph API" al usar email_borrador</div>
+      <div class="trouble-a">
+        Esto es esperado en modo SMTP. SMTP es un protocolo de solo envío — no puede crear borradores en el buzón. Para usar <code>email_borrador</code> necesitas configurar el modo Graph API con <code>TENANT_ID</code>, <code>CLIENT_ID</code> y <code>CLIENT_SECRET</code>. Ver la sección "SMTP bloqueado por IT" para la alternativa.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RECORDAR ══ -->
+  <div class="section">
+    <span class="sec-anchor" id="recordar"></span>
+    <h2 style="margin-top:48px;">Qué recordar en el día a día</h2>
+
+    <div class="cmp-grid" style="margin-top:16px;">
+      <div class="cmp-card" style="background:rgba(86,211,100,.04);border-color:rgba(86,211,100,.2);">
+        <h4 style="color:var(--green);margin-bottom:12px;">✅ Para usar</h4>
+        <ul>
+          <li><span>📂</span><span>Abre Claude Code desde <code>home-Termux/</code></span></li>
+          <li><span>🔌</span><span>El MCP arranca solo — no necesitas hacer nada</span></li>
+          <li><span>💬</span><span>Habla en español natural: "manda el reporte a..."</span></li>
+          <li><span>📋</span><span>Usa <code>/mcp</code> para verificar que está conectado</span></li>
+          <li><span>📅</span><span>Los jobs se guardan en <code>queue.json</code> aunque reinicies</span></li>
+        </ul>
+      </div>
+      <div class="cmp-card" style="background:rgba(255,166,87,.04);border-color:rgba(255,166,87,.2);">
+        <h4 style="color:var(--orange);margin-bottom:12px;">⚠️ No olvidar</h4>
+        <ul>
+          <li><span>🔒</span><span>Nunca subas <code>.env</code> a git</span></li>
+          <li><span>🔒</span><span>No compartas <code>.mcp.json</code> con la contraseña</span></li>
+          <li><span>⏱</span><span>Emails programados requieren Claude Code abierto</span></li>
+          <li><span>📧</span><span>Revisa spam en los primeros envíos</span></li>
+          <li><span>🔄</span><span>Si cambias tu contraseña de Outlook, actualiza <code>.env</code> y <code>.mcp.json</code></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout ok" style="margin-top:24px;">
+      <span class="callout-ico">🎉</span>
+      <p><strong>Todo listo.</strong> Ahora puedes enviar emails desde Claude Code con una instrucción en lenguaje natural. Para habilitar borradores y consulta de enviados, configura el modo Graph API cuando tengas acceso a Azure AD.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span><strong>email-mcp</strong> v1.0.0 · Manual completo · 2026-05-11</span>
+    <span>
+      <a href="../../index.html">← Índice de proyectos</a>
+      &nbsp;·&nbsp;
+      <a href="../../mcp-vs-tradicional.html">¿Por qué MCP?</a>
+    </span>
+  </footer>
+
+</div><!-- /main -->
+
+<script>
+  // Highlight active nav link on scroll
+  const links = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.sec-anchor');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.getAttribute('id');
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -75% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

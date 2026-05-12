@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:32px 0;">
+  <tr><td align="center">
+    <table width="640" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+      <!-- HEADER -->
+      <tr>
+        <td style="background:linear-gradient(135deg,#1a1830,#534AB7);padding:36px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <p style="color:#a5b4fc;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px;">Plataforma Digital · Naves Industriales</p>
+                <h1 style="color:#ffffff;font-size:22px;font-weight:700;margin:0;">Reporte de Proyecto</h1>
+                <h2 style="color:#c7d2fe;font-size:15px;font-weight:400;margin:6px 0 0;">{{proyecto}} · {{area_m2}} m²</h2>
+              </td>
+              <td align="right" valign="middle">
+                <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:6px 14px;">
+                  <p style="color:#e0e7ff;font-size:11px;font-weight:700;margin:0;">STATUS: MVP INDUSTRIAL</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- KPIs -->
+      <tr>
+        <td style="padding:28px 40px 0;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="33%" style="padding-right:12px;">
+                <div style="border-left:4px solid #534AB7;padding-left:14px;">
+                  <p style="color:#6b7280;font-size:11px;margin:0 0 4px;">PRESUPUESTO TOTAL</p>
+                  <p style="color:#1f2937;font-size:20px;font-weight:700;margin:0;">${{presupuesto_total}}</p>
+                  <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">MXN (CAPEX estimado)</p>
+                </div>
+              </td>
+              <td width="33%" style="padding-right:12px;">
+                <div style="border-left:4px solid #0F6E56;padding-left:14px;">
+                  <p style="color:#6b7280;font-size:11px;margin:0 0 4px;">COSTO / M²</p>
+                  <p style="color:#1f2937;font-size:20px;font-weight:700;margin:0;">${{costo_por_m2}}</p>
+                  <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">MXN por metro cuadrado</p>
+                </div>
+              </td>
+              <td width="33%">
+                <div style="border-left:4px solid #f59e0b;padding-left:14px;">
+                  <p style="color:#6b7280;font-size:11px;margin:0 0 4px;">SUELO ÚTIL DETECTADO</p>
+                  <p style="color:#1f2937;font-size:20px;font-weight:700;margin:0;">{{suelo_pct}}%</p>
+                  <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">RandLA-Net segmentación</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DICTAMEN + COTA -->
+      <tr>
+        <td style="padding:20px 40px 0;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="50%" style="padding-right:12px;">
+                <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
+                  <p style="color:#6b7280;font-size:11px;font-weight:600;margin:0 0 4px;">DICTAMEN NORMATIVO</p>
+                  <p style="font-size:18px;font-weight:800;margin:0;color:{{dictamen_color}};">{{dictamen}}</p>
+                  <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">NOM / RCDF validación</p>
+                </div>
+              </td>
+              <td width="50%">
+                <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
+                  <p style="color:#6b7280;font-size:11px;font-weight:600;margin:0 0 4px;">COTA ÓPTIMA DE PLATAFORMA</p>
+                  <p style="color:#1f2937;font-size:18px;font-weight:700;margin:0;">{{cota_optima}} m.s.n.m.</p>
+                  <p style="color:#9ca3af;font-size:11px;margin:4px 0 0;">Calculado por SciPy / ArcGIS</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- DESGLOSE PRESUPUESTAL -->
+      <tr>
+        <td style="padding:24px 40px 0;">
+          <h3 style="color:#1f2937;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px;">Desglose presupuestal</h3>
+          <div style="color:#374151;font-size:14px;line-height:1.8;">{{desglose}}</div>
+        </td>
+      </tr>
+
+      <!-- NOTAS -->
+      <tr>
+        <td style="padding:20px 40px 32px;">
+          <div style="background:#eef2ff;border-left:4px solid #534AB7;border-radius:0 8px 8px 0;padding:16px 20px;">
+            <p style="color:#3730a3;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px;">📋 Notas del análisis</p>
+            <p style="color:#4338ca;font-size:14px;line-height:1.6;margin:0;">{{notas}}</p>
+          </div>
+        </td>
+      </tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:18px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><p style="color:#9ca3af;font-size:11px;margin:0;">Naves Industriales AI · Pipeline Fase 2 · Claude Code</p></td>
+              <td align="right"><p style="color:#9ca3af;font-size:11px;margin:0;">{{fecha}} · {{hora}}</p></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

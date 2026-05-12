@@ -1,0 +1,12 @@
+{
+  "name": "email-mcp",
+  "version": "1.0.0",
+  "description": "MCP server para Microsoft 365 — sin dependencias externas, solo Node.js built-ins",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {}
+}

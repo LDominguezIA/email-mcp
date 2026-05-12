@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual de Accesos — email-mcp</title>
+  <style>
+    :root {
+      --bg:#0d1117; --surface:#161b22; --surface2:#1c2128; --surface3:#21262d;
+      --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+      --blue:#58a6ff; --green:#56d364; --purple:#d2a8ff;
+      --orange:#ffa657; --red:#f78166; --teal:#79c0ff; --yellow:#e3b341;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+    code{font-family:'SF Mono','Fira Code',monospace;font-size:.82em;background:rgba(88,166,255,.1);color:var(--teal);padding:2px 7px;border-radius:4px;}
+    a{color:var(--blue);}
+
+    .hero{padding:56px 24px 44px;text-align:center;border-bottom:1px solid var(--border);background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(86,211,100,.07) 0%,transparent 70%);}
+    .hero .doc-type{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:14px;}
+    .hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.5px;}
+    .hero p{color:var(--muted);margin-top:10px;font-size:.95rem;max-width:560px;margin-left:auto;margin-right:auto;}
+    .hero .chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+    .chip{font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid;}
+    .chip-green{background:rgba(86,211,100,.1);color:var(--green);border-color:rgba(86,211,100,.3);}
+    .chip-orange{background:rgba(255,166,87,.1);color:var(--orange);border-color:rgba(255,166,87,.3);}
+    .chip-blue{background:rgba(88,166,255,.1);color:var(--blue);border-color:rgba(88,166,255,.3);}
+
+    .container{max-width:820px;margin:0 auto;padding:60px 24px 80px;}
+
+    .sec-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .sec-label .n{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 8px;color:var(--text);}
+    h2{font-size:1.5rem;font-weight:700;letter-spacing:-.3px;margin-bottom:10px;}
+    .lead{font-size:.92rem;color:var(--muted);line-height:1.8;margin-bottom:32px;}
+
+    /* diagnosis card */
+    .diag{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px;}
+    @media(max-width:600px){.diag{grid-template-columns:1fr;}}
+    .diag-card{border:1px solid var(--border);border-radius:12px;padding:22px;cursor:default;transition:border-color .2s;}
+    .diag-card.yes{background:rgba(86,211,100,.04);border-color:rgba(86,211,100,.2);}
+    .diag-card.no{background:rgba(88,166,255,.04);border-color:rgba(88,166,255,.2);}
+    .diag-card .icon{font-size:1.8rem;margin-bottom:10px;}
+    .diag-card h3{font-size:1rem;font-weight:700;margin-bottom:6px;}
+    .diag-card p{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .diag-card .go{display:inline-block;margin-top:12px;font-size:.75rem;font-weight:700;padding:5px 14px;border-radius:6px;}
+    .diag-card.yes .go{background:rgba(86,211,100,.15);color:var(--green);}
+    .diag-card.no  .go{background:rgba(88,166,255,.15);color:var(--blue);}
+
+    /* step block */
+    .steps{display:flex;flex-direction:column;gap:0;margin-bottom:40px;}
+    .step{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid rgba(48,54,61,.6);}
+    .step:last-child{border-bottom:0;}
+    .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;margin-top:2px;}
+    .step-num.green{background:rgba(86,211,100,.15);color:var(--green);border:1px solid rgba(86,211,100,.3);}
+    .step-num.blue{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);}
+    .step-num.orange{background:rgba(255,166,87,.15);color:var(--orange);border:1px solid rgba(255,166,87,.3);}
+    .step-body{flex:1;}
+    .step-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+    .step-desc{font-size:.87rem;color:var(--muted);line-height:1.75;}
+    .step-desc strong{color:var(--text);}
+
+    /* nav path */
+    .nav-path{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.82rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;margin:10px 0;}
+    .nav-path .crumb{color:var(--text);font-weight:600;}
+    .nav-path .sep{color:var(--muted);}
+    .nav-path .action{color:var(--green);font-weight:700;}
+
+    /* code block */
+    .code-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-family:'SF Mono','Fira Code',monospace;font-size:.8rem;line-height:2;overflow-x:auto;margin:10px 0;}
+    .code-block .comment{color:var(--muted);}
+    .code-block .key{color:var(--orange);}
+    .code-block .val{color:var(--green);}
+    .code-block .url{color:var(--blue);}
+
+    /* callout */
+    .callout{border-radius:8px;padding:14px 18px;font-size:.85rem;line-height:1.7;margin:14px 0;display:flex;gap:12px;align-items:flex-start;}
+    .callout.warn{background:rgba(255,166,87,.07);border:1px solid rgba(255,166,87,.25);color:var(--orange);}
+    .callout.info{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.25);color:var(--blue);}
+    .callout.ok  {background:rgba(86,211,100,.07);border:1px solid rgba(86,211,100,.25);color:var(--green);}
+    .callout.bad {background:rgba(247,129,102,.07);border:1px solid rgba(247,129,102,.25);color:var(--red);}
+    .callout-icon{flex-shrink:0;font-size:1rem;margin-top:1px;}
+    .callout p{color:var(--text);margin:0;}
+    .callout p strong{color:inherit;}
+
+    /* route separator */
+    .route-header{display:flex;align-items:center;gap:14px;margin:40px 0 24px;}
+    .route-badge{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+    .route-badge.a{background:rgba(86,211,100,.15);color:var(--green);border:1px solid rgba(86,211,100,.3);}
+    .route-badge.b{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);}
+    .route-line{flex:1;height:1px;background:var(--border);}
+    .route-title{font-size:1.1rem;font-weight:700;}
+
+    /* troubleshoot */
+    .trouble-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+    .trouble-q{padding:14px 18px;font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:10px;}
+    .trouble-q .icon{color:var(--red);}
+    .trouble-a{padding:0 18px 14px;font-size:.84rem;color:var(--muted);line-height:1.75;border-top:1px solid var(--border);}
+    .trouble-a{padding-top:12px;}
+
+    footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;}
+    footer strong{color:var(--text);}
+    footer a{color:var(--blue);}
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="doc-type">📋 Manual de Configuración · Parte 1 de 2</div>
+  <h1>Configuración de Accesos</h1>
+  <p>Cómo obtener y configurar las credenciales para que email-mcp pueda enviar emails desde tu cuenta de Microsoft 365 / Outlook.</p>
+  <div class="chips">
+    <span class="chip chip-green">✅ Sin Azure AD requerido</span>
+    <span class="chip chip-orange">⏱ ~5 minutos</span>
+    <span class="chip chip-blue">📧 Microsoft 365 / Outlook</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── PASO 0: DIAGNÓSTICO ── -->
+  <div class="sec-label"><span class="n">00</span> Diagnóstico previo</div>
+  <h2>¿Tienes MFA activo en tu cuenta?</h2>
+  <p class="lead">MFA (autenticación de dos factores) cambia cómo debes configurar la contraseña. Elige tu caso:</p>
+
+  <div class="diag">
+    <div class="diag-card no">
+      <div class="icon">🔓</div>
+      <h3>No tengo MFA / No sé</h3>
+      <p>Entras a Outlook solo con email + contraseña, sin que te pida código del teléfono ni la app Authenticator.</p>
+      <span class="go">→ Sigue la Ruta A (más sencilla)</span>
+    </div>
+    <div class="diag-card yes">
+      <div class="icon">🔐</div>
+      <h3>Sí tengo MFA activo</h3>
+      <p>Al entrar a Outlook te pide un código de la app Microsoft Authenticator, un SMS, o una notificación en el teléfono.</p>
+      <span class="go">→ Sigue la Ruta B (contraseña de app)</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>¿Cómo verifico si tengo MFA?</strong> Ve a <strong>account.microsoft.com</strong> → Seguridad → Opciones de seguridad avanzadas. Si ves "Verificación en dos pasos: Activada", estás en la Ruta B.</p>
+  </div>
+
+
+  <!-- ══ RUTA A ══ -->
+  <div class="route-header">
+    <span class="route-badge a">Ruta A</span>
+    <div class="route-line"></div>
+    <span class="route-title">Sin MFA — contraseña directa</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num green">1</div>
+      <div class="step-body">
+        <div class="step-title">Anota tu email y contraseña de Outlook</div>
+        <div class="step-desc">
+          Es la misma contraseña que usas para entrar a Outlook en el navegador o en la app de escritorio.
+          <br><strong>No necesitas hacer nada más en la web.</strong> Ya tienes todo lo necesario.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num green">2</div>
+      <div class="step-body">
+        <div class="step-title">Crea el archivo <code>.env</code></div>
+        <div class="step-desc">
+          En la carpeta <code>email-mcp/</code> crea un archivo llamado exactamente <code>.env</code> (con el punto al inicio):
+        </div>
+        <div class="code-block">
+<span class="comment"># email-mcp/.env</span>
+<span class="key">SMTP_USER</span>=<span class="val">ldominguez@atisa.com</span>
+<span class="key">SMTP_PASS</span>=<span class="val">tu_contraseña_de_outlook</span>
+<span class="key">FROM_EMAIL</span>=<span class="val">ldominguez@atisa.com</span>
+        </div>
+        <div class="callout warn" style="margin-top:8px;">
+          <span class="callout-icon">⚠️</span>
+          <p><strong>Nunca compartas este archivo.</strong> Está en <code>.gitignore</code> y no se sube al repositorio, pero no lo envíes por chat ni email.</p>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num green">3</div>
+      <div class="step-body">
+        <div class="step-title">Actualiza <code>.mcp.json</code> con la contraseña</div>
+        <div class="step-desc">Abre <code>email-mcp/.mcp.json</code> y rellena el campo <code>SMTP_PASS</code>:</div>
+        <div class="code-block">
+{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"email-mcp"</span>: {
+      <span class="key">"command"</span>: <span class="val">"node"</span>,
+      <span class="key">"args"</span>: [<span class="val">"/home/llopez/.../email-mcp/src/index.js"</span>],
+      <span class="key">"env"</span>: {
+        <span class="key">"SMTP_USER"</span>: <span class="val">"ldominguez@atisa.com"</span>,
+        <span class="key">"SMTP_PASS"</span>: <span class="val">"tu_contraseña_aquí"</span>,   <span class="comment">← rellena esto</span>
+        <span class="key">"FROM_EMAIL"</span>: <span class="val">"ldominguez@atisa.com"</span>
+      }
+    }
+  }
+}
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num green">4</div>
+      <div class="step-body">
+        <div class="step-title">Verifica que funciona</div>
+        <div class="step-desc">
+          Desde la terminal, en la carpeta <code>email-mcp/</code>, ejecuta:
+        </div>
+        <div class="code-block">node src/index.js</div>
+        <div class="step-desc" style="margin-top:8px;">
+          Debes ver: <code style="color:var(--green);">[email-mcp] Servidor iniciado en modo SMTP.</code><br>
+          Presiona <strong>Ctrl+C</strong> para detenerlo. Si ves ese mensaje, la configuración es correcta — Claude Code lo arrancará automáticamente.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ok">
+    <span class="callout-icon">✅</span>
+    <p><strong>Ruta A completa.</strong> Continúa con el <a href="manual-claude-code.html">Manual de Claude Code</a> para terminar la configuración.</p>
+  </div>
+
+
+  <!-- ══ RUTA B ══ -->
+  <div class="route-header">
+    <span class="route-badge b">Ruta B</span>
+    <div class="route-line"></div>
+    <span class="route-title">Con MFA — contraseña de aplicación</span>
+  </div>
+
+  <p class="lead" style="margin-bottom:20px;">
+    Con MFA activo, tu contraseña normal no funciona para SMTP. Microsoft bloquea esto por seguridad.
+    La solución es una <strong>contraseña de aplicación</strong>: una clave especial de 16 letras que Microsoft genera solo para apps que no soportan MFA.
+  </p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <p><strong>¿Qué es una contraseña de aplicación?</strong> Es una contraseña separada que se usa solo para esta app. No reemplaza tu contraseña principal. Si la comprometes, puedes revocarla sin cambiar nada más.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num blue">1</div>
+      <div class="step-body">
+        <div class="step-title">Ve a la configuración de seguridad de tu cuenta Microsoft</div>
+        <div class="step-desc">Abre el navegador y ve a:</div>
+        <div class="nav-path">
+          <span class="url">https://account.microsoft.com/security</span>
+        </div>
+        <div class="step-desc">Inicia sesión con tu cuenta <strong>ldominguez@atisa.com</strong> si te lo pide.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num blue">2</div>
+      <div class="step-body">
+        <div class="step-title">Abre las opciones de seguridad avanzadas</div>
+        <div class="step-desc">En la página de Seguridad busca y haz clic en:</div>
+        <div class="nav-path">
+          <span class="crumb">Seguridad</span><span class="sep">›</span>
+          <span class="action">Opciones de seguridad avanzadas</span>
+        </div>
+        <div class="step-desc">O busca directamente el enlace <strong>"Opciones de seguridad avanzadas"</strong> en la página.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num blue">3</div>
+      <div class="step-body">
+        <div class="step-title">Crea una nueva contraseña de aplicación</div>
+        <div class="step-desc">En la sección <strong>"Contraseñas de aplicación"</strong> haz clic en:</div>
+        <div class="nav-path">
+          <span class="crumb">Contraseñas de aplicación</span><span class="sep">›</span>
+          <span class="action">Crear una nueva contraseña de aplicación</span>
+        </div>
+        <div class="step-desc" style="margin-top:8px;">Microsoft generará automáticamente una contraseña de 16 caracteres como esta:</div>
+        <div class="code-block"><span class="val">abcd efgh ijkl mnop</span>   <span class="comment">← ejemplo, la tuya será diferente</span></div>
+        <div class="callout warn" style="margin-top:8px;">
+          <span class="callout-icon">⚠️</span>
+          <p><strong>Cópiala en este momento.</strong> Microsoft solo la muestra una vez. Si la cierras sin copiarla, tendrás que generar otra.</p>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num blue">4</div>
+      <div class="step-body">
+        <div class="step-title">Crea el archivo <code>.env</code> con esa contraseña</div>
+        <div class="step-desc">
+          Usa la contraseña de aplicación <strong>sin espacios</strong> como valor de <code>SMTP_PASS</code>:
+        </div>
+        <div class="code-block">
+<span class="comment"># email-mcp/.env</span>
+<span class="key">SMTP_USER</span>=<span class="val">ldominguez@atisa.com</span>
+<span class="key">SMTP_PASS</span>=<span class="val">abcdefghijklmnop</span>   <span class="comment">← sin espacios</span>
+<span class="key">FROM_EMAIL</span>=<span class="val">ldominguez@atisa.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num blue">5</div>
+      <div class="step-body">
+        <div class="step-title">Actualiza <code>.mcp.json</code></div>
+        <div class="step-desc">Igual que la Ruta A, rellena <code>SMTP_PASS</code> en <code>email-mcp/.mcp.json</code> con la contraseña de aplicación (sin espacios).</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num blue">6</div>
+      <div class="step-body">
+        <div class="step-title">Verifica que funciona</div>
+        <div class="step-desc">
+          Desde la terminal en la carpeta <code>email-mcp/</code>:
+        </div>
+        <div class="code-block">node src/index.js</div>
+        <div class="step-desc" style="margin-top:8px;">
+          Debes ver <code style="color:var(--green);">[email-mcp] Servidor iniciado en modo SMTP.</code> — eso confirma que la contraseña es correcta y el servidor arranca bien.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ok">
+    <span class="callout-icon">✅</span>
+    <p><strong>Ruta B completa.</strong> Continúa con el <a href="manual-claude-code.html">Manual de Claude Code</a> para terminar la configuración.</p>
+  </div>
+
+
+  <!-- ── CASO ESPECIAL: SMTP DESHABILITADO POR IT ── -->
+  <div class="sec-label" style="margin-top:48px;"><span class="n">⚠️</span> Caso especial</div>
+  <h2>¿Y si IT deshabilitó SMTP AUTH en mi cuenta?</h2>
+  <p class="lead">Algunos administradores de Microsoft 365 deshabilitan SMTP AUTH por política de seguridad. Si el servidor da error 535 o "AUTH command not accepted", este es tu caso.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num orange">1</div>
+      <div class="step-body">
+        <div class="step-title">Cómo saber si es este caso</div>
+        <div class="step-desc">
+          Cuando el error al intentar enviar diga alguno de estos mensajes:
+        </div>
+        <div class="code-block">
+<span class="comment">SMTP 535: 5.7.139 Authentication unsuccessful...</span>
+<span class="comment">SMTP 503: AUTH command not accepted</span>
+<span class="comment">5.7.57 SMTP; Client was not authenticated</span>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num orange">2</div>
+      <div class="step-body">
+        <div class="step-title">Qué pedirle a IT (es un cambio de 30 segundos para ellos)</div>
+        <div class="step-desc">
+          Manda este mensaje a tu administrador de Microsoft 365:
+        </div>
+        <div class="code-block">
+Hola, necesito que habilites "SMTP AUTH" para mi cuenta
+ldominguez@atisa.com en el centro de administración de
+Microsoft 365.
+
+Ruta: Centro de administración M365 → Usuarios → mi cuenta
+→ Correo → Configuración de correo → Envío de correo
+autenticado (SMTP) → Activar
+
+Es para una herramienta de automatización interna.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num orange">3</div>
+      <div class="step-body">
+        <div class="step-title">Alternativa: Graph API (si IT no puede ayudar pronto)</div>
+        <div class="step-desc">
+          Si necesitas avanzar sin esperar a IT, puedes pedir a un administrador de Azure AD que cree un <strong>App Registration</strong> con permisos <code>Mail.Send</code> y <code>Mail.ReadWrite</code>. Luego configura <code>TENANT_ID</code>, <code>CLIENT_ID</code> y <code>CLIENT_SECRET</code> en el <code>.env</code> en lugar de <code>SMTP_USER</code> y <code>SMTP_PASS</code>. El servidor detectará automáticamente el modo Graph API y usará funcionalidad completa.
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── TROUBLESHOOTING ── -->
+  <div class="sec-label" style="margin-top:48px;"><span class="n">FAQ</span> Errores comunes</div>
+  <h2>¿Algo no funciona?</h2>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><span class="icon">❌</span> Error: "Authentication unsuccessful" o código 535</div>
+    <div class="trouble-a">
+      <strong>Contraseña incorrecta.</strong> Verifica que <code>SMTP_PASS</code> sea exactamente la contraseña de Outlook o la contraseña de aplicación. Si tienes MFA activo y usaste tu contraseña principal, cambia a contraseña de aplicación (Ruta B). Asegúrate de no incluir espacios ni comillas alrededor del valor en el archivo <code>.env</code>.
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><span class="icon">❌</span> Error: "Timeout de conexión SMTP (30s)"</div>
+    <div class="trouble-a">
+      <strong>El servidor SMTP no es accesible.</strong> Puede ser: (1) estás en una red que bloquea el puerto 587 (algunas VPNs o redes corporativas hacen esto), (2) el host es incorrecto. Verifica que <code>SMTP_HOST=smtp.office365.com</code> y que tienes acceso a internet en la terminal (prueba <code>ping smtp.office365.com</code>).
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><span class="icon">❌</span> Error: "SMTP 503: AUTH command not accepted"</div>
+    <div class="trouble-a">
+      <strong>SMTP AUTH está deshabilitado por IT en tu cuenta.</strong> Sigue el Caso Especial descrito arriba para pedir a tu administrador que lo habilite para tu usuario.
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><span class="icon">❌</span> El servidor arranca pero el email no llega</div>
+    <div class="trouble-a">
+      <strong>Revisa la carpeta de Spam</strong> del destinatario. Los primeros envíos pueden ir a spam hasta que el receptor marque el remitente como seguro. También verifica en <strong>Elementos enviados</strong> de Outlook que el email efectivamente salió.
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><span class="icon">❌</span> El archivo .env no se carga</div>
+    <div class="trouble-a">
+      El archivo debe llamarse exactamente <code>.env</code> (con el punto) y estar en la raíz de <code>email-mcp/</code>, no dentro de <code>src/</code>. Verifica con <code>ls -la email-mcp/</code> — debe aparecer en la lista. Si usas Windows y el explorador de archivos no te deja crear archivos que empiezan con punto, créalo desde la terminal con <code>touch email-mcp/.env</code>.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Manual de Accesos · <strong>email-mcp v1.0.0</strong> · 2026-05-11 ·
+  <a href="manual-claude-code.html">Manual de Claude Code →</a> ·
+  <a href="../index.html">← Índice de proyectos</a>
+</footer>
+
+</body>
+</html>

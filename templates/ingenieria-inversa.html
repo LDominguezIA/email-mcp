@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f0f4f8;font-family:Segoe UI,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:32px 0;">
+  <tr><td align="center">
+    <table width="620" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+
+      <!-- HEADER -->
+      <tr>
+        <td style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:36px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <p style="color:#7c9cbf;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px;">Reporte Técnico</p>
+                <h1 style="color:#ffffff;font-size:22px;font-weight:700;margin:0;">Ingeniería Inversa</h1>
+                <h2 style="color:#58a6ff;font-size:16px;font-weight:400;margin:6px 0 0;">{{proyecto}}</h2>
+              </td>
+              <td align="right" valign="top">
+                <table cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="background:#58a6ff;border-radius:50%;width:52px;height:52px;text-align:center;vertical-align:middle;">
+                      <span style="color:#fff;font-size:22px;">🔬</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- HEALTH SCORE -->
+      <tr>
+        <td style="background:#f8fafe;padding:20px 40px;border-bottom:1px solid #e8edf3;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><p style="color:#6b7a8d;font-size:12px;margin:0 0 4px;">Health Score</p><p style="color:#1a1a2e;font-size:28px;font-weight:700;margin:0;">{{health_score}}<span style="font-size:16px;color:#6b7a8d;">/100</span></p></td>
+              <td><p style="color:#6b7a8d;font-size:12px;margin:0 0 4px;">Stack Principal</p><p style="color:#1a1a2e;font-size:14px;font-weight:600;margin:0;">{{stack}}</p></td>
+              <td><p style="color:#6b7a8d;font-size:12px;margin:0 0 4px;">Fecha de Análisis</p><p style="color:#1a1a2e;font-size:14px;font-weight:600;margin:0;">{{fecha}}</p></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- BODY -->
+      <tr><td style="padding:32px 40px;">
+
+        <!-- Arquitectura -->
+        <h3 style="color:#1a1a2e;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-left:3px solid #58a6ff;padding-left:10px;margin:0 0 12px;">Arquitectura detectada</h3>
+        <p style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 24px;">{{arquitectura}}</p>
+
+        <!-- Hallazgos -->
+        <h3 style="color:#1a1a2e;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-left:3px solid #f59e0b;padding-left:10px;margin:0 0 12px;">Hallazgos principales</h3>
+        <div style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 24px;">{{hallazgos}}</div>
+
+        <!-- Recomendaciones -->
+        <h3 style="color:#1a1a2e;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-left:3px solid #10b981;padding-left:10px;margin:0 0 12px;">Recomendaciones</h3>
+        <div style="color:#374151;font-size:14px;line-height:1.7;margin:0 0 8px;">{{recomendaciones}}</div>
+
+      </td></tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td style="background:#f8fafe;border-top:1px solid #e8edf3;padding:20px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td><p style="color:#9ca3af;font-size:11px;margin:0;">Generado por <strong>Claude Code</strong> + claude-skills-engineering</p></td>
+              <td align="right"><p style="color:#9ca3af;font-size:11px;margin:0;">{{fecha}} · {{hora}}</p></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

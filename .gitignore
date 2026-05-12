@@ -1,0 +1,7 @@
+node_modules/
+.env
+queue.json
+.mcp.json
+*.local
+.npm-cache/
+.npmrc
