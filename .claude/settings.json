@@ -1,16 +1,12 @@
 {
   "enabledPlugins": {
-    "claude-skills-engineering@local-skills": true
+    "claude-skills-engineering@claude-skills-engineering": true
   },
-  "mcpServers": {
-    "email-mcp": {
-      "command": "node",
-      "args": ["/home/llopez/tablet/Documents/home-Termux/email-mcp/src/index.js"],
-      "env": {
-        "TENANT_ID": "",
-        "CLIENT_ID": "",
-        "CLIENT_SECRET": "",
-        "FROM_EMAIL": "ldominguez@atisa.com"
+  "extraKnownMarketplaces": {
+    "claude-skills-engineering": {
+      "source": {
+        "repo": "LDominguezIA/claude-skills-engineering",
+        "source": "github"
       }
     }
   }
