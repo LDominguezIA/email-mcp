@@ -1,13 +1,13 @@
 {
-  "enabledPlugins": {
-    "claude-skills-engineering@claude-skills-engineering": true
-  },
   "extraKnownMarketplaces": {
     "claude-skills-engineering": {
       "source": {
-        "repo": "LDominguezIA/claude-skills-engineering",
-        "source": "github"
+        "source": "github",
+        "repo": "LDominguezIA/claude-skills-engineering"
       }
     }
+  },
+  "enabledPlugins": {
+    "claude-skills-engineering@claude-skills-engineering": true
   }
 }
